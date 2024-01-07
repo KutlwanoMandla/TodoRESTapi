@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "mongoose": "^8.0.3",
+    "morgan": "^1.10.0"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "name": "todorestapi",
+  "description": "Todo Rest Api",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "author": "Kutlwano Masombuka",
+  "license": "ISC"
+}
