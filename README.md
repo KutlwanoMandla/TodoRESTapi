@@ -17,3 +17,14 @@ This repository contains a simple Todo REST API built using JavaScript, Node.js,
 - **Node.js**: The server-side JavaScript runtime.
 - **Express**: A fast and minimalist web framework for Node.js.
 - **MongoDB**: A NoSQL database used for storing todo tasks.
+
+## API Endpoints
+
+- **POST /tasks**: Create a new task.
+- **GET /tasks**: Get all tasks.
+- **GET /tasks/:taskId**: Get a specific task by ID.
+- **GET /tasks/complete**: Get all completed tasks.
+- **GET /tasks/incomplete**: Get all incomplete tasks.
+- **PATCH /tasks/:taskId**: Update a task by ID.
+- **DELETE /tasks**: Delete all tasks.
+- **DELETE /tasks/:taskId**: Delete a task by ID.
