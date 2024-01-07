@@ -14,90 +14,162 @@ router.post('/', (req, res, next) => {
     });
 
     task.save()
-    .then(result => {
-        res.status(201).json({
-            message: "Task Added Successfully",
-            task: {
-                _id: result._id,
-                title: result.title,
-                description: result.description
-            },
-            completed: result.complete,
-            date: result.date
+        .then(result => {
+            res.status(201).json({
+                message: "Task Added Successfully",
+                task: {
+                    _id: result._id,
+                    title: result.title,
+                    description: result.description
+                },
+                completed: result.complete,
+                date: result.date
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
         });
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error: err
-        });
-    });
 })
 
 router.get('/', (req, res, next) => {
-    Task.find()
-    .select('_id title description date complete')
-    .exec()
-    .then(tasks => {
-        console.log(tasks)
 
-        const response = {
-            numberOfTasks: tasks.length,
-            tasks: tasks.map(task => {
-                return {
-                    _id: task._id,
-                    title: task.title,
-                    description: task.description,
-                    date: task.date,
-                    completed: task.complete
+    const query = req.query;
+    console.log(query)
+
+    if (JSON.stringify(query) === '{}') {
+        Task.find()
+            .select('_id title description date complete')
+            .exec()
+            .then(tasks => {
+                console.log(tasks)
+
+                const response = {
+                    status: "All Tasks",
+                    numberOfTasks: tasks.length,
+                    tasks: tasks.map(task => {
+                        return {
+                            _id: task._id,
+                            title: task.title,
+                            description: task.description,
+                            date: task.date,
+                            completed: task.complete
+                        }
+                    })
+                }
+                res.status(200).json(response)
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(500).json({
+                    error: err
+                })
+            })
+    } else {
+
+        if (!query.hasOwnProperty('status')) {
+            res.status(404).json({
+                error: "Not found"
+            })
+        }
+
+        if (query.status === 'complete') {
+            Task.find({ complete: true })
+                .select('_id title description date complete')
+                .exec()
+                .then(tasks => {
+                    console.log(tasks)
+                    const response = {
+                        status: "Complete Tasks",
+                        numberOfTasks: tasks.length,
+                        tasks: tasks.map(task => {
+                            return {
+                                _id: task._id,
+                                title: task.title,
+                                description: task.description,
+                                date: task.date,
+                                completed: task.complete
+                            }
+                        })
+                    }
+                    res.status(200).json(response)
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(500).json({
+                        error: err
+                    })
+                })
+
+        } else if (query.status === 'incomplete') {
+
+            Task.find({ complete: false })
+                .select('_id title description date complete')
+                .exec()
+                .then(tasks => {
+                    console.log(tasks)
+
+                    const response = {
+                        status: "Incomplete Tasks",
+                        numberOfTasks: tasks.length,
+                        tasks: tasks.map(task => {
+                            return {
+                                _id: task._id,
+                                title: task.title,
+                                description: task.description,
+                                date: task.date,
+                                completed: task.complete
+                            }
+                        })
+                    }
+                    res.status(200).json(response)
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(500).json({
+                        error: err
+                    })
+                })
+        } else {
+            res.status(404).json({
+                error: "Not found",
+                queriesAllowed: {
+                    getAllTasks: "http://localhost:23450/tasks",
+                    getCompleteTasks: "http://localhost:23450/tasks?status=complete",
+                    getIncompleteTasks: "http://localhost:23450/tasks?status=incomplete"
                 }
             })
         }
-        res.status(200).json(response)
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(500).json({
-            error: err
-        })
-    })
-
+    }
 })
 
 router.get('/:taskId', (req, res, next) => {
     const id = req.params.taskId
 
     Task
-    .findById(id)
-    .select('title description date isComplete')
-    .exec()
-    .then(result => {
-        res.status(200).json({
-            message: `Task with id: ${id}`,
-            task: {
-                title: result.title,
-                description: result.description,
-                date: result.date,
-                completed: result.complete
-            }
+        .findById(id)
+        .select('title description date isComplete')
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: `Task with id: ${id}`,
+                task: {
+                    title: result.title,
+                    description: result.description,
+                    date: result.date,
+                    completed: result.complete
+                }
+            })
         })
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(500).json({
-            error: err
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({
+                error: err
+            })
         })
-    })
-    
-})
 
-router.get('/complete', (req, res, next) => {
-    res.send('<h1>Hello World im complete</h1>')
-});
-
-
-router.get('/incomplete', (req, res, next) => {
-    
 })
 
 router.patch('/:taskId', (req, res, next) => {
@@ -112,55 +184,55 @@ router.patch('/:taskId', (req, res, next) => {
 
     console.log(updateOps)
 
-    Task.updateOne({_id: id}, {$set: updateOps})
-    .exec()
-    .then(result => {
-        res.status(200).json({
-            message: "Task Updated",
+    Task.updateOne({ _id: id }, { $set: updateOps })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: "Task Updated",
+            })
         })
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(500).json({
-            error: err
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({
+                error: err
+            })
         })
-    })
 
 })
 
 router.delete('/:taskId', (req, res, next) => {
     const id = req.params.taskId;
-    
-    Task.deleteOne({_id: id})
-    .exec()
-    .then(result => {
-        res.status(200).json({
-            message: "Task Deleted"
+
+    Task.deleteOne({ _id: id })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: "Task Deleted"
+            })
         })
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(500).json({
-            error: err
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({
+                error: err
+            })
         })
-    })
 
 
 })
 
 router.delete('/', (req, res, next) => {
     Task.deleteMany({})
-    .exec()
-    .then(result => {
-        res.status(200).json({
-            message: "Deleted All Tasks"
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: "Deleted All Tasks"
+            })
         })
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(500).json({
-            error: err
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({
+                error: err
+            })
         })
-    })
 })
 module.exports = router
