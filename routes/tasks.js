@@ -40,6 +40,8 @@ router.get('/', (req, res, next) => {
     console.log(query)
 
     if (JSON.stringify(query) === '{}') {
+        // get all tasks(complete + incomplete)
+
         Task.find()
             .select('_id title description date complete')
             .exec()
@@ -76,6 +78,8 @@ router.get('/', (req, res, next) => {
         }
 
         if (query.status === 'complete') {
+            //get all completed tasks 
+
             Task.find({ complete: true })
                 .select('_id title description date complete')
                 .exec()
@@ -104,6 +108,7 @@ router.get('/', (req, res, next) => {
                 })
 
         } else if (query.status === 'incomplete') {
+            // get all incomplete tasks
 
             Task.find({ complete: false })
                 .select('_id title description date complete')
