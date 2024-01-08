@@ -11,15 +11,8 @@ mongoose.connect(
      '@newprojectcluster.dbpspqy.mongodb.net/?retryWrites=true&w=majority');
 
 app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-
-// app.use((req, res, next) => {
-//     res.status(200).json({
-//         message: "It works"
-//     })
-// })
-
 
 // Handling CORS Errors
 app.use ((req, res, next) => {
@@ -33,10 +26,7 @@ app.use ((req, res, next) => {
     next();
 });
 
-
 app.use('/tasks', taskRouter);
-
-
 
 // Error Handling
 app.use((req, res, next) => {
