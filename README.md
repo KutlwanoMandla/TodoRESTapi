@@ -22,9 +22,9 @@ This repository contains a simple Todo REST API built using JavaScript, Node.js,
 
 - **POST /tasks**: Create a new task.
 - **GET /tasks**: Get all tasks.
+- **GET /tasks?status=complete**: Get all completed tasks
+- **GET /tasks?status=incomplete**: Get all incomplete tasks
 - **GET /tasks/:taskId**: Get a specific task by ID.
-- **GET /tasks/complete**: Get all completed tasks.
-- **GET /tasks/incomplete**: Get all incomplete tasks.
 - **PATCH /tasks/:taskId**: Update a task by ID.
 - **DELETE /tasks**: Delete all tasks.
 - **DELETE /tasks/:taskId**: Delete a task by ID.
